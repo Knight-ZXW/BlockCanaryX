@@ -1,0 +1,6 @@
+rootProject.name = "BlockCanaryX"
+include ':app'
+include ':stacksampler'
+include ':flamegraph-ui'
+include ':blockcanary'
+include ':blockcanary-ui'

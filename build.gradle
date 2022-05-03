@@ -1,0 +1,56 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.4.0'
+    repositories {
+        mavenCentral()
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        maven { url 'https://jitpack.io' }
+//        google()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
+//        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+plugins {
+    id "io.codearte.nexus-staging" version "0.30.0"
+}
+
+nexusStaging {
+    serverUrl = "https://s01.oss.sonatype.org/service/local/" //required only for projects registered in Sonatype after 2021-02-24
+    packageGroup = "io.github.knight-zxw" //optional if packageGroup == project.getGroup()
+    username = SONATYPE_NEXUS_USERNAME
+    password = SONATYPE_NEXUS_PASSWORD
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        jcenter()
+        maven { url 'https://jitpack.io' }
+//        google()
+        mavenLocal()
+    }
+    tasks.withType(Javadoc) {
+        enabled = false
+    }
+}
+
+subprojects { project ->
+    group = GROUP
+    version = VERSION_NAME
+}
+
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

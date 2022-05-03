@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="block_canary_notification_channel">Block Canary Channel</string>
+    <string name="block_canary_display_activity_label">卡顿记录</string>
+    <string name="block_canary_notification_channel_low">BlockCanary Low Priority</string>
+    <string name="block_canary_notification_channel_result">BlockCanary Result</string>
+
+</resources>

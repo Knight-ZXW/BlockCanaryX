@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="block_canary_auto_install" type="bool">true</item>
+</resources>

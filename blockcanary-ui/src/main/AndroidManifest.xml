@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="blockcanary.ui">
+    <application>
+        <activity
+            android:name="BlockDetailActivity"
+            android:exported="false" />
+
+        <activity-alias
+            android:name="BlockLauncherActivity"
+            android:enabled="@bool/block_canary_add_launcher_icon"
+            android:icon="@mipmap/block_canary"
+            android:label="@string/block_canary_display_activity_label"
+            android:targetActivity=".BlockListActivity"
+            android:taskAffinity="blockcanary.ui.${applicationId}"
+            android:theme="@style/block_canary_BlockCanary.Base"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <!-- Android TV launcher intent -->
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+
+
+        <activity
+            android:name="BlockListActivity"
+            android:icon="@mipmap/block_canary"
+            android:enabled="@bool/block_canary_add_launcher_icon"
+            android:exported="false"
+            android:label="Blocking History"
+            android:taskAffinity="blockcanary.ui.${applicationId}"
+            android:theme="@style/block_canary_BlockCanary.Base"
+            />
+
+    </application>
+</manifest>

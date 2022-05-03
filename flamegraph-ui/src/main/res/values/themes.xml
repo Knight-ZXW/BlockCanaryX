@@ -1,0 +1,10 @@
+<resources>
+    <style name="FlameGraph.Base" parent="ThemeOverlay.AppCompat">
+        <item name="android:windowBackground">#242424</item>
+    </style>
+
+    <style name="FlameGraph.Base.NoActionBar" parent="FlameGraph.Base">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>
