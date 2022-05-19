@@ -45,4 +45,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
-apply from: rootProject.file('gradle/publish.gradle')
+apply plugin: "com.vanniktech.maven.publish"

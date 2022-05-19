@@ -1,9 +1,11 @@
 package com.knightboost.stacksampler.demo
 
 import android.os.*
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import androidx.annotation.NonNull
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -33,15 +35,13 @@ class MainActivity : AppCompatActivity() {
                 }
                 var message = handler.obtainMessage()
                 message.what = 301
-                message.arg1= 500
+                message.arg1 = 500
                 message.sendToTarget()
-
-
             }
 
         findViewById<View>(R.id.btn_block_test2)
             .setOnClickListener {
-                                BlockMethodMock.ioWork()
+                BlockMethodMock.ioWork()
             }
     }
 
