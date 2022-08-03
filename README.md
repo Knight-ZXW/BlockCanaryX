@@ -48,3 +48,4 @@ BlockCanary.install(application,blockCanaryConfig)
 - [ ] 卡顿消息支持一键清除、过期自动清除
 - [ ] 记录消息处理消耗的cpu时间
 - [ ] 记录慢消息执行时，所在的前台Activity, APP的状态、
+- [ ] 支持Native 抓栈能力
