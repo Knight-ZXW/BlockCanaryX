@@ -35,10 +35,20 @@ allprojects {
     }
 }
 
+
 subprojects { project ->
     group = GROUP
     version = VERSION_NAME
+    tasks.withType(Javadoc) {
+        enabled = false
+    }
+    plugins.withId("com.vanniktech.maven.publish") {
+        mavenPublish {
+            sonatypeHost = "s01"
+        }
+    }
 }
+
 
 
 task clean(type: Delete) {

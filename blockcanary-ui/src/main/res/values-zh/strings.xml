@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete">删除</string>
+    <string name="clear_records">清除全部记录</string>
+
+</resources>

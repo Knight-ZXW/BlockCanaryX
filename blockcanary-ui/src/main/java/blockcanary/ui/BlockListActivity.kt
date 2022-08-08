@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.*
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,10 @@ class BlockListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_block_list)
+
+    }
+    private val toolbar:Toolbar by lazy {
+        findViewById(R.id.tool_bar)
     }
 
     override fun onResume() {
@@ -42,7 +47,23 @@ class BlockListActivity : AppCompatActivity() {
         refreshList()
     }
 
-    fun refreshList() {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.block_canary_main_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item.itemId
+        if (itemId == R.id.clear_all){
+            BlockCanary.blockInfoRepository.deleteAll()
+            refreshList()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+
+    private fun refreshList() {
         Thread {
             val blocks = BlockCanary.blockInfoRepository.listBlockInfo()
             mainHandler.post { onBlocksRetrieved(blocks) }
@@ -109,7 +130,7 @@ class BlockListActivity : AppCompatActivity() {
             }
     }
 
-    fun onBlockLongClick(view: View, blockInfo: BlockInfo) {
+    private fun onBlockLongClick(view: View, blockInfo: BlockInfo) {
         val popupMenu = PopupMenu(this, view, Gravity.RIGHT or Gravity.BOTTOM)
         popupMenu.menuInflater.inflate(R.menu.block_item_action, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
