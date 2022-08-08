@@ -14,6 +14,7 @@
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
         <entry key="blockcanary-ui/src/main/res/drawable/block_canary_icon.xml" value="0.1" />
         <entry key="blockcanary-ui/src/main/res/drawable/block_canary_icon_foreground.xml" value="0.1" />
+        <entry key="blockcanary-ui/src/main/res/layout/activity_block_list.xml" value="0.17760416666666667" />
         <entry key="blockcanary-ui/src/main/res/layout/block_canary_block_row.xml" value="0.15489130434782608" />
       </map>
     </option>

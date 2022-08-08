@@ -20,6 +20,11 @@
         <item name="android:actionBarStyle">@style/block_canary_Widget.ActionBar</item>
     </style>
 
+    <style name="block_canary_BlockCanary.NoActionBar" parent="block_canary_BlockCanary.Base">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="block_canary_Widget.ActionBar" parent="Theme.AppCompat">
         <item name="android:background">@color/block_canary_background_color</item>
         <item name="android:elevation">0dp</item>

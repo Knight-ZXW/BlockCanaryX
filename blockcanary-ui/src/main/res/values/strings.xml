@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete">delete</string>
+    <string name="clear_records">clear all records</string>
+</resources>
