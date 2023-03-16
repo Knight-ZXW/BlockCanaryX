@@ -8,10 +8,19 @@ android {
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+        externalNativeBuild {
+            cmake {
+                abiFilters 'armeabi-v7a','arm64-v8a'
+                cppFlags "-std=c++14"
+            }
+        }
     }
 
     buildTypes {
@@ -27,6 +36,22 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+
+    externalNativeBuild {
+        cmake {
+            path file('CMakeLists.txt')
+            version '3.18.1'
+        }
+    }
+    buildFeatures {
+        prefab true
+    }
+
+    packagingOptions {
+        exclude "**/libbytehook.so"
+    }
+
 }
 
 dependencies {
@@ -38,6 +63,7 @@ dependencies {
     implementation 'androidx.startup:startup-runtime:1.0.0'
     implementation project(path: ':stacksampler')
     implementation project(path: ':flamegraph-ui')
+    implementation("com.bytedance:bytehook:1.0.7")
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
