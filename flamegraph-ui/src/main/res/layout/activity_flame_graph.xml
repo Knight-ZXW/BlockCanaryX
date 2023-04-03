@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FlameGraphActivity">
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:text="返回"
+        android:onClick="clickBack"
+        android:visibility="visible"
+        android:layout_height="wrap_content"/>
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</LinearLayout>
+</RelativeLayout>
