@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.*
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import android.webkit.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -107,6 +108,10 @@ class FlameGraphActivity : AppCompatActivity() {
                     .show()
             }
         }
+        finish()
+    }
+
+    fun clickBack(view: View) {
         finish()
     }
 
