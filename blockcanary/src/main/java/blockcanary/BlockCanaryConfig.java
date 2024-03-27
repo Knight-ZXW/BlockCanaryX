@@ -16,6 +16,11 @@ public class BlockCanaryConfig {
     private int stackSampleInterval;
 
     /**
+     * 是否采集Cpu时间
+     */
+    private boolean useCpuTime;
+
+    /**
      * 堆栈采样的最大缓存数量
      */
     private int maxStackSampleCacheCount;
@@ -37,6 +42,7 @@ public class BlockCanaryConfig {
         setMaxStackSampleCacheCount(builder.maxStackSampleCacheCount);
         setMaxCacheBlockingFiles(builder.maxCacheBlockingFiles);
         setDetectWhenDebuggerConnected(builder.detectWhenDebuggerConnected);
+        setUseCpuTime(builder.useCpuTime);
     }
 
     public static Builder newBuilder() {
@@ -103,6 +109,14 @@ public class BlockCanaryConfig {
         this.detectWhenDebuggerConnected = detectWhenDebuggerConnected;
     }
 
+    public boolean isUseCpuTime() {
+        return useCpuTime;
+    }
+
+    public void setUseCpuTime(boolean useCpuTime) {
+        this.useCpuTime = useCpuTime;
+    }
+
     public static final class Builder {
         private int blockThresholdTime =16*15;
         private int blockMaxThresholdTime = 5000;
@@ -110,6 +124,8 @@ public class BlockCanaryConfig {
         private int maxStackSampleCacheCount=110;
         private int maxCacheBlockingFiles = 50;
         private boolean detectWhenDebuggerConnected = false;
+
+        private boolean useCpuTime = false;
 
         private Builder() {
         }
@@ -144,6 +160,13 @@ public class BlockCanaryConfig {
             detectWhenDebuggerConnected = val;
             return this;
         }
+
+        public Builder useCpuTime(boolean useCpuTime){
+            this.useCpuTime = useCpuTime;
+            return this;
+        }
+
+
 
         public BlockCanaryConfig build() {
             return new BlockCanaryConfig(this);

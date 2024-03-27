@@ -33,7 +33,8 @@ internal object BlockCanaryInternal {
     val stackSampler: StackSampler by lazy {
         StackSampler(
             Looper.getMainLooper().thread,
-            blockCanaryConfig.stackSampleInterval
+            blockCanaryConfig.stackSampleInterval,
+            blockCanaryConfig.isUseCpuTime
         )
     }
 

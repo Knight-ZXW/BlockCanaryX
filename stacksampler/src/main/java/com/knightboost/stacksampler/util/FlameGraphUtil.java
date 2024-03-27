@@ -34,12 +34,12 @@ public class FlameGraphUtil {
 
         StackTraceSample firstItem = stackTraceSamples.get(0);
         String groupStackText = toFlameGraphLine(firstItem.getStackTraceElements());
-        long groupTime = firstItem.getTime();
+        long groupTime = firstItem.getWallTime();
         int count = 1;
         StringBuilder sb = new StringBuilder();
         if (stackTraceSamples.size() == 1) {
             if (outputContainTime) {
-                sb.append(firstItem.getTime()).append(" ");
+                sb.append(firstItem.getWallTime()).append(" ");
             }
             return sb.append(groupStackText)
                     .append(" ").append(count).toString();
@@ -52,7 +52,7 @@ public class FlameGraphUtil {
             } else {
                 //当前的堆栈和prev的堆栈不同，则 将 prev的 记录的堆栈 和次数写入 builder
                 if (outputContainTime) {
-                    sb.append(firstItem.getTime()).append(" ");
+                    sb.append(firstItem.getWallTime()).append(" ");
                 }
                 sb.append(groupStackText)
                         .append(" ")
@@ -64,7 +64,7 @@ public class FlameGraphUtil {
         }
 
         if (outputContainTime) {
-            sb.append(firstItem.getTime()).append(" ");
+            sb.append(firstItem.getWallTime()).append(" ");
         }
         sb.append(groupStackText)
                 .append(" ")

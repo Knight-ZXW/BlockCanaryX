@@ -4,11 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build.VERSION
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import blockcanary.ui.R
-import blockcanary.ui.Screen
 
 internal fun ViewGroup.inflate(layoutResId: Int) = LayoutInflater.from(context)
     .inflate(layoutResId, this, false)!!

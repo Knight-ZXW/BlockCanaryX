@@ -7,7 +7,7 @@ class MainThreadStackSampler {
     companion object {
         private val stackSampler = StackSampler(
             Looper.getMainLooper().thread,
-            50
+            50,true
         )
 
         @JvmStatic

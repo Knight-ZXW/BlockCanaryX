@@ -1,8 +1,10 @@
 package com.knightboost.stacksampler;
 
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.knightboost.artvm.ArtThread;
 import com.knightboost.stacksampler.util.FastTimer;
 
 import java.util.ArrayList;
@@ -26,10 +28,16 @@ public class StackSampler {
     private boolean isSampling = false;
 
     //default value: 20 seconds
-    private final int DEFAULT_MAX_SAMPLING_TOTAL_MILL_TIME =20*1000;
+    private final int DEFAULT_MAX_SAMPLING_TOTAL_MILL_TIME = 20 * 1000;
+
+    private long wallTime = 0;
+    private long cpuTime = 0;
+
+    private long targetThreadPeer;
+    private boolean useCpuTime = false;
 
     public StackSampler(final @NonNull Thread targetThread,
-                        int sampleInterval) {
+                        int sampleInterval, boolean useCpuTime) {
         this.scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -38,6 +46,13 @@ public class StackSampler {
                 return thread;
             }
         });
+        this.useCpuTime = useCpuTime;
+        if (useCpuTime) {
+            targetThreadPeer = ArtThread.getNativePeer(targetThread);
+            if (targetThreadPeer <= 0) {
+
+            }
+        }
         init(targetThread, scheduler, sampleInterval, DEFAULT_MAX_SAMPLING_TOTAL_MILL_TIME);
 
     }
@@ -65,21 +80,29 @@ public class StackSampler {
         if (isSampling) {
             return;
         }
-        scheduler.scheduleAtFixedRate(new Runnable() {
+        scheduler.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-
-                long wallTime = FastTimer.currentTimeMillis();
+                long nowWallTime = FastTimer.currentTimeMillis();
+                long nowCpuTime = 0;
+                if (useCpuTime) {
+                    nowCpuTime = ArtThread.getCpuMicroTime(targetThreadPeer)/1000;
+                }
                 //todo support cpu time by read /proc/pid/tid/..
                 StackTraceElement[] stackTraceElements = targetThread.getStackTrace();
-                StackTraceSample stackTraceSample = new StackTraceSample(wallTime, stackTraceElements);
-                synchronized (queueLock){
-                    if (stackTraceSampleQueue.size()>maxCacheCount){
+
+                StackTraceSample stackTraceSample = new StackTraceSample(
+                        nowWallTime - wallTime,
+                        nowCpuTime - cpuTime,
+                        stackTraceElements);
+                wallTime = nowWallTime;
+                cpuTime = nowCpuTime;
+                synchronized (queueLock) {
+                    if (stackTraceSampleQueue.size() > maxCacheCount) {
                         stackTraceSampleQueue.poll();
                     }
                     stackTraceSampleQueue.offer(stackTraceSample);
                 }
-
             }
         }, 0, sampleInterval, TimeUnit.MILLISECONDS);
         isSampling = true;
@@ -94,24 +117,24 @@ public class StackSampler {
         return this.sampleInterval;
     }
 
-    public List<StackTraceSample> getStackSamplesBetweenElapseRealTime(long beginTime, long endTime){
+    public List<StackTraceSample> getStackSamplesBetweenElapseRealTime(long beginTime, long endTime) {
         long beginWallTime = FastTimer.convertElapseRealTimeToRTCTime(beginTime);
         long endWallTime = FastTimer.convertElapseRealTimeToRTCTime(endTime);
-        return getStackSamplesBetweenWallTime(beginWallTime,endWallTime);
+        return getStackSamplesBetweenWallTime(beginWallTime, endWallTime);
     }
 
-    public List<StackTraceSample> getStackSamplesBetweenWallTime(long beginTime, long endTime){
+    public List<StackTraceSample> getStackSamplesBetweenWallTime(long beginTime, long endTime) {
         ArrayList<StackTraceSample> stackTraceSamples = null;
-        synchronized (queueLock){
-             stackTraceSamples = new ArrayList<>(stackTraceSampleQueue);
+        synchronized (queueLock) {
+            stackTraceSamples = new ArrayList<>(stackTraceSampleQueue);
         }
 
         ArrayList<StackTraceSample> result = new ArrayList<>();
 
         for (int i = 0; i < stackTraceSamples.size(); i++) {
             StackTraceSample item = stackTraceSamples.get(i);
-            long time = item.getTime();
-            if (time>=beginTime && time<=endTime){
+            long time = item.getWallTime();
+            if (time >= beginTime && time <= endTime) {
                 result.add(item);
             }
         }

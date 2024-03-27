@@ -1,5 +1,5 @@
 package blockcanary.ui
-import blockcanary.ui.R
+
 
 
 internal enum class NotificationType(

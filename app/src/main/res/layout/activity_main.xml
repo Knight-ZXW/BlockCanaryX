@@ -7,6 +7,12 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+
+    <Button
+        android:id="@+id/btn_cpu_work"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="模拟主线程cpu操作" />
     <Button
         android:id="@+id/btn_block_test"
         android:layout_width="wrap_content"

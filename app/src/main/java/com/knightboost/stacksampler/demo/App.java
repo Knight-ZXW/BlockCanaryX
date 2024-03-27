@@ -15,6 +15,8 @@ public class App extends Application {
         super.onCreate();
         BlockCanary.INSTANCE
                 .install(this,
-                        BlockCanaryConfig.newBuilder().build());
+                        BlockCanaryConfig.newBuilder()
+                                .useCpuTime(true)
+                                .build());
     }
 }

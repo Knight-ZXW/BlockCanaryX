@@ -4,7 +4,7 @@ plugins {
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 30
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.knightboot.blocakCananry.sapmle"
@@ -29,6 +29,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    packagingOptions {
+        pickFirst '**/libbytehook.so'
+        pickFirst '**/libxdl.so'
+        pickFirst '**/libshadowhook.so'
+    }
+
 }
 
 dependencies {

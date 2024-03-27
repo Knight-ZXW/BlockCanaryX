@@ -43,6 +43,23 @@ class MainActivity : AppCompatActivity() {
             .setOnClickListener {
                 BlockMethodMock.ioWork()
             }
+
+        findViewById<View>(R.id.btn_cpu_work).setOnClickListener {
+            val begin = System.currentTimeMillis()
+            var i = 1.0;
+            var loop = true
+            Log.e("zxw","开始模拟")
+            while (loop){
+                for (j in 1..1000){
+                    i = i/0.3;
+                }
+                if (System.currentTimeMillis()-begin>20){
+                    loop =false;
+                }
+            }
+            Log.e("zxw","模拟结束")
+
+        }
     }
 
 }
