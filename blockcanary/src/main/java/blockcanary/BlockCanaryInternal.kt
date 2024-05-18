@@ -111,6 +111,7 @@ internal object BlockCanaryInternal {
 
 
     private fun onBlockDetect(blockInfo: BlockInfo) {
+        if (!blockCanaryConfig.isDetectWhenDebuggerConnected && Debug.isDebuggerConnected()) return
         blockInfo.sampleInterval = blockCanaryConfig.stackSampleInterval
         CanaryExecutors.workExecutor
             .execute {
