@@ -1,116 +1,103 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import json
 import sys
-import os
-import shutil
 
 
-def trans(srcJsonFilePath, targetJsonFilePath):
-    # 从文件中加载JSON数据
-    with open(srcJsonFilePath) as f:
-        srcJson = json.load(f)
-        stackTraceSamples = srcJson['stackTraceSamples']
+def transform(src_json_file, target_json_file):
+    with open(src_json_file) as f:
+        src_json = json.load(f)
+        stack_trace_samples = src_json['stackTraceSamples']
 
-        # {"name": "Asub", "cat": "PERF", "ph": "B", "pid": 22630, "tid": 22630, "ts": 100},
-        # {"name": "Asub", "cat": "PERF", "ph": "E", "pid": 22630, "tid": 22630, "ts": 200},
+        target_json_array = []
 
-        targetJsonArray = []
+        # 处理第一个 stack
+        if stack_trace_samples:
+            sample_first = stack_trace_samples[0]
+            process_stack(sample_first, target_json_array, "B")
 
-        # 处理first
-        sampleFirst = stackTraceSamples[0]
-        timeFirst = sampleFirst['time']
-        stackFirst = sampleFirst['stackTraceElements']
-        # 栈底在下面，所以翻转一下
-        for element in reversed(stackFirst):
-            targetJsonArray.append(createTargetElement(element, timeFirst, "B"))
+        # 处理中间 stack samples
+        for i in range(1, len(stack_trace_samples)):
+            sample1 = stack_trace_samples[i - 1]
+            sample2 = stack_trace_samples[i]
+            compare_and_process(sample1, sample2, target_json_array)
 
-        for index in range(1, len(stackTraceSamples)):
-            sample1 = stackTraceSamples[index - 1]
-            time1 = sample1['time']
-            stack1 = sample1['stackTraceElements']
-            # print("stack1:" + str(stack1))
-            sample2 = stackTraceSamples[index]
-            time2 = sample2['time']
-            stack2 = sample2['stackTraceElements']
-            # print("stack2:" + str(stack2))
-            # 比较两个栈
-            diffR = compareStack(stack1, stack2)
-            print("找到不同的栈位置（倒数jj）：" + str(diffR))
+        # 处理最后一个 stack
+        if stack_trace_samples:
+            sample_last = stack_trace_samples[-1]
+            process_stack(sample_last, target_json_array, "E")
 
-            diffCount1 = len(stack1) - diffR
-            print("diffCount1=" + str(diffCount1))
-            diffCount2 = len(stack2) - diffR
-            print("diffCount2=" + str(diffCount2))
-            # 结束的函数
-            for j in range(diffCount1):
-                element = stack1[j]
-                targetJsonArray.append(createTargetElement(element, time2, "E"))  # 这里结束时间使用time2
-            # 开始的函数
-            for j in range(diffCount2):
-                # 翻转一下
-                element = stack2[diffCount2 - 1 - j]
-                targetJsonArray.append(createTargetElement(element, time2, "B"))
-
-        # 处理last
-        sampleLast = stackTraceSamples[len(stackTraceSamples) - 1]
-        timeLast = sampleLast['time']
-        stackLast = sampleLast['stackTraceElements']
-        for element in stackLast:
-            targetJsonArray.append(createTargetElement(element, timeLast, "E"))
-
-        # print(json.dumps(targetJsonArray, indent=2))
-
-        # 将JSON数据保存到文件中
-        with open(targetJsonFilePath, 'w') as file:
-            json.dump(targetJsonArray, file, indent=4)
-        print("JSON数据已保存到文件:" + targetJsonFilePath)
+        # 将结果写入目标 JSON 文件
+        with open(target_json_file, 'w') as file:
+            json.dump(target_json_array, file, indent=4)
+        print(f"转换完成，结果已保存到文件: {target_json_file}")
 
 
-# 相同方法判断：只判断了 类名&方法名
-def isSameMethod(element1, element2):
-    return element1['declaringClass'] == element2['declaringClass'] and element1['methodName'] == element2[
-        'methodName']  # and element1['lineNumber'] == element2['lineNumber']
+def compare_and_process(sample1, sample2, target_json_array):
+    stack1 = sample1['stackTraceElements'][::-1]
+    stack2 = sample2['stackTraceElements'][::-1]
+    diff_index = compare_stack(stack1, stack2)
+
+    time2 = sample2['time']
+
+    # 结束的函数
+    for element in stack1[diff_index:]:
+        target_json_array.append(create_target_element(element, time2, "E"))
+
+    # 开始的函数
+    for element in stack2[diff_index:]:
+        target_json_array.append(create_target_element(element, time2, "B"))
 
 
-def compareStack(stack1, stack2):
-    result = min(len(stack1), len(stack2))
-    for j in range(result):
-        j1 = len(stack1) - 1 - j
-        j2 = len(stack2) - 1 - j
-        element1 = stack1[j1]
-        element2 = stack2[j2]
-        if not (isSameMethod(element1, element2)):
-            print("找到不同的栈位置（倒数j）：" + str(j))
-            result = j
-            return result
-    return result
+def process_stack(sample, target_json_array, flag):
+    time = sample['time']
+    stack = sample['stackTraceElements'][::-1]  # 反转堆栈顺序
+
+    for element in stack:
+        target_json_array.append(create_target_element(element, time, flag))
 
 
-def createTargetElement(element, time, flag):
-    # 使用 split() 函数将字符串根据空格拆分
+def compare_stack(stack1, stack2):
+    min_length = min(len(stack1), len(stack2))
+    for i in range(min_length):
+        element1 = stack1[i]
+        element2 = stack2[i]
+        last_element1 = stack1[i - 1] if i > 0 else None
+        last_element2 = stack2[i - 1] if i > 0 else None
+        if not is_same_method(element1, element2, last_element1, last_element2):
+            return i
+    return min_length
+
+
+def is_same_method(element1, element2, last_element1, last_element2):
+    current_element_same = (
+            element1['declaringClass'] == element2['declaringClass'] and
+            element1['methodName'] == element2['methodName']
+    )
+    if last_element1 is None and last_element2 is None:
+        return current_element_same
+    else:
+        return current_element_same and last_element1['lineNumber'] == last_element2['lineNumber']
+
+
+def create_target_element(element, time, flag):
     parts = element['declaringClass'].split('.')
-    # 获取最后一个部分，即类名
-    className = parts[-1]
+    class_name = parts[-1]
     return {
-        "name": className + '#' + element['methodName'],
+        "name": f"{class_name}#{element['methodName']}",
         "cat": "PERF",
-        "ph": flag,  # 开始："B"，结束："E"
-        "pid": 22630,  # 假设固定的进程ID
-        "tid": 22630,  # 假设固定的线程ID
+        "ph": flag,
+        "pid": 22630,
+        "tid": 22630,
         "ts": time * 1000
     }
 
 
 # 使用方法：python3 block2perfetto.py 要转换的采样json文件
 if __name__ == '__main__':
-    srcJsonFilePath = 'top-915.json'
+    src_json = 'error1.json'
     if len(sys.argv) > 1:
-        srcJsonFilePath = sys.argv[1]
+        src_json = sys.argv[1]
         print('读取到参数：' + sys.argv[1])
 
-    targetJsonFilePath = srcJsonFilePath + '.perfetto'
+    target_json = src_json + 'V2.perfetto'
 
-    trans(srcJsonFilePath, targetJsonFilePath)
+    transform(src_json, target_json)
